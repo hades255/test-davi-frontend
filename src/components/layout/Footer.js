@@ -1,0 +1,70 @@
+'use client'
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { usePathname } from 'next/navigation' 
+
+import ChatItem from '@/assets/chat_item.png'
+import VGCItem from '@/assets/VGC_item.png'
+import FooterItem from "../FooterItem"
+
+export default function Footer () {
+  const [activeTab, setActiveTab] = useState(null)
+  const router = useRouter()
+  const pathname = usePathname() 
+
+  useEffect(() => {
+    const routeToTab = {
+      '/documentchat': 'Chat',
+      '/ggd': 'GGD',
+    }
+
+    const tab = routeToTab[pathname] || null 
+    setActiveTab(tab) 
+  }, [pathname]) 
+
+  const handleClick = (label) => {
+    setActiveTab(label)
+    if (label === 'Chat') {
+      router.push('/documentchat')
+    } else if (label === 'GGD Checks') {
+      router.push('/GGD')
+    } 
+  }
+
+  const footerItems = [
+    {
+      image: ChatItem,
+      text: 'Chat',
+      route: '/documentchat',
+      width: '45px',
+      height: '49px',
+      gap: '2',
+    },
+    {
+      image: VGCItem,
+      text: 'GGD Checks',
+      route: '/GGD',
+      width: '43px',
+      height: '43px',
+      gap: '3',
+    }
+  ]
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 w-full h-[120px] flex items-center px-[30px] justify-between bg-[#F9FBFA]">
+      {footerItems.map((item, index) => (
+        <FooterItem
+          key={index}
+          text={item.text}
+          isActive={activeTab === item.text}
+          onClick={() => handleClick(item.text)}
+          image={item.image}
+          width={item.width}
+          height={item.height}
+          gap={item.gap}
+        />
+      ))}
+    </div>
+  )
+}
