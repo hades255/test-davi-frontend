@@ -1,3 +1,7 @@
+/**
+ * Keycloak auth config.
+ * To skip auth locally, set NEXT_PUBLIC_SKIP_AUTH=true in .env
+ */
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({

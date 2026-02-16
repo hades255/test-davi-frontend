@@ -17,6 +17,7 @@ const UploadStates = {
 };
 
 export default function DocumentClient() {
+  console.log("DocumentClient");
   const { askQuestion, uploadDocument, loading: apiLoading, error } = useApi();
 
   const [response, setResponse] = useState('');

@@ -5,13 +5,15 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
 export default function Home() {
+  console.log(process.env.NEXT_PUBLIC_SKIP_AUTH);
+
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
       <WorkspaceProvider>
         <MainLayout>
           <DocumentClient />
         </MainLayout>
       </WorkspaceProvider>
-    </ProtectedRoute>
+    // {/* </ProtectedRoute> */}
   );
 }

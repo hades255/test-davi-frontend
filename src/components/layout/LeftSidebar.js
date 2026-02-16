@@ -102,21 +102,27 @@ export default function LeftSidebar() {
     [initialized, keycloak?.authenticated]
   );
 
-  const userRoles = useMemo(() => {
-    if (!isAuthenticated) return {
-      isSuperAdmin: false,
-      isCompanyAdmin: false,
-      isCompanyUser: false
-    };
+  // const userRoles = useMemo(() => {
+  //   if (!isAuthenticated) return {
+  //     isSuperAdmin: false,
+  //     isCompanyAdmin: false,
+  //     isCompanyUser: false
+  //   };
 
-    const roles = keycloak?.tokenParsed?.realm_access?.roles || [];
+  //   const roles = keycloak?.tokenParsed?.realm_access?.roles || [];
 
-    return {
-      isSuperAdmin: roles.includes("super_admin"),
-      isCompanyAdmin: roles.includes("company_admin"),
-      isCompanyUser: roles.includes("company_user")
-    };
-  }, [isAuthenticated, keycloak?.tokenParsed]);
+  //   return {
+  //     isSuperAdmin: true, //roles.includes("super_admin"),
+  //     isCompanyAdmin: true, //roles.includes("company_admin"),
+  //     isCompanyUser: true, //roles.includes("company_user")
+  //   };
+  // }, [isAuthenticated, keycloak?.tokenParsed]);
+
+  const userRoles = {
+    isSuperAdmin: true,
+    isCompanyAdmin: false,
+    isCompanyUser: false
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -315,16 +321,16 @@ export default function LeftSidebar() {
     return map;
   }, [filteredPublicModules, filteredAdminModules]);
 
-  useEffect(() => {
-    if (pathname === "/" && !userRoles.isSuperAdmin) {
-      const defaultRoute =
-        filteredPublicModules[0]?.path ||
-        filteredAdminModules[0]?.path ||
-        "/documentchat";
+  // useEffect(() => {
+  //   if (pathname === "/" && !userRoles.isSuperAdmin) {
+  //     const defaultRoute =
+  //       filteredPublicModules[0]?.path ||
+  //       filteredAdminModules[0]?.path ||
+  //       "/documentchat";
 
-      router.push(defaultRoute);
-    }
-  }, [pathname, filteredPublicModules, filteredAdminModules, userRoles.isSuperAdmin, router]);
+  //     router.push(defaultRoute);
+  //   }
+  // }, [pathname, filteredPublicModules, filteredAdminModules, userRoles.isSuperAdmin, router]);
 
   useEffect(() => {
     setActiveTab(routeToTab[pathname] || null);
@@ -408,6 +414,8 @@ export default function LeftSidebar() {
     );
   }, [filteredAdminModules, activeTab, handleNavigation, getStable]);
 
+  console.log(filteredPublicModules)
+
   const logoutButton = useMemo(() => {
     const handler = getStable("logout", handleLogout);
     return (
@@ -420,38 +428,38 @@ export default function LeftSidebar() {
     );
   }, [handleLogout, getStable]);
 
-  if (!initialized || loading) {
-    return (
-      <div className="flex flex-col h-screen w-[320px] max-w-[360px] bg-white border-r border-slate-200 shadow-sm">
-        <div className="px-8 pt-10 pb-6 border-b border-slate-200">
-          <div className="font-extrabold text-3xl leading-none font-montserrat text-[#23BD92]">
-            DAVI
-          </div>
-          <div className="mt-3 flex items-center gap-2 text-gray-600 text-sm">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#23BD92]"></div>
-            Laden...
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (!initialized || loading) {
+  //   return (
+  //     <div className="flex flex-col h-screen w-[320px] max-w-[360px] bg-white border-r border-slate-200 shadow-sm">
+  //       <div className="px-8 pt-10 pb-6 border-b border-slate-200">
+  //         <div className="font-extrabold text-3xl leading-none font-montserrat text-[#23BD92]">
+  //           DAVI
+  //         </div>
+  //         <div className="mt-3 flex items-center gap-2 text-gray-600 text-sm">
+  //           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#23BD92]"></div>
+  //           Laden...
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (!isAuthenticated) {
-    const loginHandler = getStable("login", () => router.push("/"));
-    return (
-      <div className="flex flex-col h-screen w-[320px] max-w-[360px] bg-white border-r border-slate-200 shadow-sm">
-        <div className="px-8 pt-10 pb-6 border-b border-slate-200">
-          <div className="font-extrabold text-3xl leading-none text-[#23BD92]">
-            DAVI
-          </div>
-          <div className="mt-2 text-gray-500 text-sm">Log in om verder te gaan</div>
-        </div>
-        <div className="px-8 py-6">
-          <MenuButton text="Login" image={logoutItem} isActive={false} onClick={loginHandler} />
-        </div>
-      </div>
-    );
-  }
+  // if (!isAuthenticated) {
+  //   const loginHandler = getStable("login", () => router.push("/"));
+  //   return (
+  //     <div className="flex flex-col h-screen w-[320px] max-w-[360px] bg-white border-r border-slate-200 shadow-sm">
+  //       <div className="px-8 pt-10 pb-6 border-b border-slate-200">
+  //         <div className="font-extrabold text-3xl leading-none text-[#23BD92]">
+  //           DAVI
+  //         </div>
+  //         <div className="mt-2 text-gray-500 text-sm">Log in om verder te gaan</div>
+  //       </div>
+  //       <div className="px-8 py-6">
+  //         <MenuButton text="Login" image={logoutItem} isActive={false} onClick={loginHandler} />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="flex flex-col h-screen w-[320px] max-w-[360px] bg-white border-r border-slate-200 shadow-sm">

@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { apiClient, createAuthHeaders } from '@/lib/apiClient';
+import { isSkipAuth, MOCK_WORKSPACES } from '@/lib/mockAuth';
 
 const WorkspaceContext = createContext(null);
 
@@ -23,6 +24,10 @@ export function WorkspaceProvider({ children }) {
         setWorkspaces(null);
         setSelectedOwnerId(null);
         setPermissions(null);
+        return;
+      }
+      if (isSkipAuth()) {
+        setWorkspaces(MOCK_WORKSPACES);
         return;
       }
       const token = keycloak.token;

@@ -28,6 +28,7 @@ const saveHistoryToLocalStorage = (history) => {
 };
 
 export default function BKRtClient() {
+  console.log("BKRtClient")
   const { keycloak } = useKeycloak();
   const { uploadDocument } = useApi();
   const fileInputRef = useRef(null);

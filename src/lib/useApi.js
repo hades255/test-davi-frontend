@@ -1,6 +1,7 @@
 import { useKeycloak } from '@react-keycloak/web';
 import { useCallback, useState, useRef } from 'react';
 import { apiClient, createAuthHeaders } from './apiClient';
+import { MOCK_AUTH_TOKEN, MOCK_USER, MOCK_WORKSPACES, isSkipAuth } from './mockAuth';
 
 let isRefreshing = false;
 let refreshPromise = null;
@@ -11,6 +12,7 @@ export function useApi() {
   const [error, setError] = useState(null);
 
   const getToken = useCallback(async () => {
+    if (isSkipAuth()) return MOCK_AUTH_TOKEN;
     if (!keycloak?.authenticated) {
       throw new Error('User is not authenticated');
     }
@@ -482,15 +484,17 @@ export function useApi() {
 
   const getGuestWorkspaces = useCallback(
     () =>
-      withAuth((token) =>
-        apiClient
-          .get('/company-admin/guest-workspaces', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((res) => res.data)
-      ),
+      isSkipAuth()
+        ? Promise.resolve(MOCK_WORKSPACES)
+        : withAuth((token) =>
+            apiClient
+              .get('/company-admin/guest-workspaces', {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              })
+              .then((res) => res.data)
+          ),
     [withAuth]
   );
 
@@ -520,13 +524,16 @@ export function useApi() {
 
   const getUser = useCallback(
     () =>
-      withAuth((token) =>
-        apiClient
-          .get('/company-admin/user', createAuthHeaders(token))
-          .then((res) => {
-            console.log(' --- USER --- :', res.data)
-            return res.data})
-      ),
+      isSkipAuth()
+        ? Promise.resolve(MOCK_USER)
+        : withAuth((token) =>
+            apiClient
+              .get('/company-admin/user', createAuthHeaders(token))
+              .then((res) => {
+                console.log(' --- USER --- :', res.data);
+                return res.data;
+              })
+          ),
     [withAuth]
   );
 

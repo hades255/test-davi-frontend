@@ -4,6 +4,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApi } from '@/lib/useApi';
+import { isSkipAuth } from '@/lib/mockAuth';
 
 // Define which paths are admin-only (BEHEER) vs module paths (MODULES)
 const ADMIN_PATHS = ['/rollen', '/rol-pz', '/gebruikers', '/documenten', '/mappen', '/compagnies'];
@@ -19,6 +20,8 @@ export default function ProtectedRoute({ children }) {
 
   useEffect(() => {
     if (!initialized) return;
+
+    if (isSkipAuth()) return;
 
     // Not authenticated → go to Keycloak
     if (!keycloak.authenticated) {
