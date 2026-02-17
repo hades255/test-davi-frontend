@@ -17,11 +17,18 @@ export const useCreativeChatI18n = () => {
 const STORAGE_KEY = "creativeChat_language";
 
 export function CreativeChatI18nProvider({ children }) {
-  const [language, setLanguage] = useState(() => {
-    if (typeof window === "undefined") return "nl";
+  const [language, setLanguage] = useState("nl");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "en" ? "en" : "nl";
-  });
+    if (stored === "en" || stored === "nl") setLanguage(stored);
+  }, [mounted]);
 
   const translations = {
     en: enTranslations,
@@ -29,10 +36,10 @@ export function CreativeChatI18nProvider({ children }) {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (mounted && typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, language);
     }
-  }, [language]);
+  }, [mounted, language]);
 
   const t = (key) => {
     const keys = key.split(".");

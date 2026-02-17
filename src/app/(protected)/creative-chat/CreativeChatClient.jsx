@@ -35,7 +35,7 @@ export default function CreativeChatClient() {
       setLoading(false);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: t("creativeChat.cancelledMessage") },
+        { role: "assistant", contentKey: "creativeChat.cancelledMessage" },
       ]);
     }
   };
@@ -116,7 +116,7 @@ export default function CreativeChatClient() {
                       : "text-black"
                   }`}
                 >
-                  {msg.content}
+                  {msg.contentKey ? t(msg.contentKey) : msg.content}
                 </div>
               </div>
             ))}
