@@ -9,9 +9,9 @@
     "cancel": "Stop",
     "cancelledMessage": "Antwoord geannuleerd.",
     "options": {
-      "Schrijven": "Schrijven",
-      "Herschrijven": "Herschrijven",
-      "Brainstormen": "Brainstormen",
+      "Schrijven": "Schrijf",
+      "Herschrijven": "Herschrijf",
+      "Brainstormen": "Brainstorm",
       "SMART": "SMART"
     }
   }
