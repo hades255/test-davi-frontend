@@ -17,6 +17,7 @@ import GebruikersItem from "@/assets/gebruikers_item.png";
 import DocumentenItem from "@/assets/documenten_item.png";
 import CompanyItem from "@/assets/company_item.png";
 import GrayFolderIcon from "@/components/icons/GrayFolderIcon"
+import CreateiveChatIcon from "@/assets/CreateiveChat.svg"
 
 const MENU_CONFIG = {
   publicModules: [
@@ -33,6 +34,13 @@ const MENU_CONFIG = {
       icon: VGCItem,
       path: '/GGD',
       moduleKey: 'GGD Checks'
+    },
+    {
+      id: 'creative-chat',
+      label: 'Creative Chat',
+      icon: CreateiveChatIcon,
+      path: '/creative-chat',
+      moduleKey: 'Creative Chat'
     }
   ],
   adminModules: [
@@ -305,6 +313,7 @@ export default function LeftSidebar() {
       "/documentchat": "Documentenchat",
       "/documentchat/mijn": "Documentenchat",
       "/GGD": "GGD Checks",
+      "/creative-chat": "Creative Chat",
       "/compagnies": "Compagnies",
       "/rollen": "Rollen",
       "/rol-pz": "Rollen",

@@ -34,6 +34,7 @@ export const MOCK_USER = {
   modules: {
     'Documenten chat': { enabled: true },
     'GGD Checks': { enabled: true },
+    'Creative Chat': { enabled: true },
   },
 };
 

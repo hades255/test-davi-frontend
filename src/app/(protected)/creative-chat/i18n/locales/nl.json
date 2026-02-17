@@ -1,0 +1,18 @@
+{
+  "creativeChat": {
+    "title": "CreatieChat",
+    "description": "Schrijf, herschrijf en brainstorm met hulp van AI.",
+    "placeholder": "Typ je bericht...",
+    "submit": "Versturen",
+    "language": "Taal",
+    "errorGeneric": "Er is een fout opgetreden. Probeer opnieuw.",
+    "cancel": "Stop",
+    "cancelledMessage": "Antwoord geannuleerd.",
+    "options": {
+      "Schrijven": "Schrijven",
+      "Herschrijven": "Herschrijven",
+      "Brainstormen": "Brainstormen",
+      "SMART": "SMART"
+    }
+  }
+}

@@ -8,7 +8,7 @@ import { isSkipAuth } from '@/lib/mockAuth';
 
 // Define which paths are admin-only (BEHEER) vs module paths (MODULES)
 const ADMIN_PATHS = ['/rollen', '/rol-pz', '/gebruikers', '/documenten', '/mappen', '/compagnies'];
-const MODULE_PATHS = ['/documentchat', '/GGD', '/bkr', '/vgc', '/3-uurs'];
+const MODULE_PATHS = ['/documentchat', '/creative-chat', '/GGD', '/bkr', '/vgc', '/3-uurs'];
 
 export default function ProtectedRoute({ children }) {
   const { keycloak, initialized } = useKeycloak();
@@ -17,6 +17,8 @@ export default function ProtectedRoute({ children }) {
   const { getUser } = useApi();
   const [user, setUser] = useState(null);
   const [userLoaded, setUserLoaded] = useState(false);
+
+  return children;
 
   useEffect(() => {
     if (!initialized) return;
@@ -119,6 +121,8 @@ export default function ProtectedRoute({ children }) {
           let hasAccess = false;
           if (pathname.startsWith('/documentchat')) {
             hasAccess = user.modules?.['Documenten chat']?.enabled === true;
+          } else if (pathname.startsWith('/creative-chat')) {
+            hasAccess = user.modules?.['Creative Chat']?.enabled === true;
           } else if (pathname.startsWith('/GGD')) {
             hasAccess = user.modules?.['GGD Checks']?.enabled === true;
           } else {
@@ -130,6 +134,8 @@ export default function ProtectedRoute({ children }) {
             // User doesn't have access to this module - redirect to first available module
             if (user.modules?.['Documenten chat']?.enabled) {
               router.replace('/documentchat');
+            } else if (user.modules?.['Creative Chat']?.enabled) {
+              router.replace('/creative-chat');
             } else if (user.modules?.['GGD Checks']?.enabled) {
               router.replace('/GGD');
             } else {

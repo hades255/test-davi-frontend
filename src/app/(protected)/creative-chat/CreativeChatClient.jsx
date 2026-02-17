@@ -1,0 +1,155 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { useCreativeChatI18n } from "./contexts/CreativeChatI18nContext";
+import CreativeChatInput from "./components/CreativeChatInput";
+import { apiClient } from "@/lib/apiClient";
+
+const TONE_TO_TASK_TYPE = {
+  Schrijven: "draft",
+  Herschrijven: "rewrite",
+  Brainstormen: "brainstorm",
+  SMART: "smart",
+};
+
+export default function CreativeChatClient() {
+  const { t } = useCreativeChatI18n();
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
+  const smartSessionIdRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+
+  const [loading, setLoading] = useState(false);
+  const hasHistory = messages.length > 0;
+  const abortControllerRef = useRef(null);
+  const cancelledRef = useRef(false);
+
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      cancelledRef.current = true;
+      abortControllerRef.current.abort();
+      setLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: t("creativeChat.cancelledMessage") },
+      ]);
+    }
+  };
+
+  const handleSubmit = async (content, tone) => {
+    setMessages((prev) => [...prev, { role: "user", content }]);
+    setLoading(true);
+    cancelledRef.current = false;
+    abortControllerRef.current = new AbortController();
+
+    const taskType = TONE_TO_TASK_TYPE[tone] ?? "draft";
+
+    if (taskType !== "smart") {
+      smartSessionIdRef.current = null;
+    } else if (!smartSessionIdRef.current) {
+      smartSessionIdRef.current =
+        (typeof crypto !== "undefined" && crypto.randomUUID?.()) ??
+        "smart-" + Date.now();
+    }
+
+    try {
+      const body = {
+        message: content,
+        task_type: taskType,
+      };
+      if (taskType === "smart" && smartSessionIdRef.current) {
+        body.session_id = smartSessionIdRef.current;
+      }
+
+      const { data } = await apiClient.post("/api/chat", body, {
+        headers: { "Content-Type": "application/json" },
+        signal: abortControllerRef.current.signal,
+      });
+
+      const reply = data.response ?? "";
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: reply, responseType: data.response_type },
+      ]);
+    } catch (err) {
+      if (cancelledRef.current || err.code === "ERR_CANCELED") {
+        return;
+      }
+      const detail =
+        err.response?.data?.detail ||
+        err.message ||
+        t("creativeChat.errorGeneric");
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: detail },
+      ]);
+    } finally {
+      setLoading(false);
+      abortControllerRef.current = null;
+    }
+  };
+
+  return (
+    <div
+      className={`w-full flex flex-col min-h-0 lg:h-full h-[calc(100vh-210px)] lg:py-[81px] lg:px-[97px] px-[25px] py-[22px] scrollbar-hide ${
+        hasHistory ? "" : "justify-center items-center"
+      }`}
+    >
+      <div className={`flex flex-col items-center min-h-0 w-full max-w-4xl mx-auto ${hasHistory ? "flex-1" : ""}`}>
+        {hasHistory && (
+          <div className="w-full flex-1 min-h-0 overflow-y-auto space-y-6 mb-6 pr-2">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`w-full max-w-2xl ${
+                  msg.role === "user" ? "ml-auto" : ""
+                }`}
+              >
+                <div
+                  className={`w-fit max-w-[85%] rounded-xl px-4 py-3 font-montserrat text-[16px] leading-relaxed ${
+                    msg.role === "user"
+                      ? "bg-[#F9FBFA] text-[#342222] ml-auto"
+                      : "text-black"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="flex justify-start mb-4">
+                <div className="bg-gray-100 rounded-lg px-4 py-3 rounded-bl-none">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.1s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+
+        {/* Input at bottom - matches SVG layout */}
+        <div className="w-full shrink-0">
+          <CreativeChatInput
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          loading={loading}
+        />
+        </div>
+      </div>
+    </div>
+  );
+}
