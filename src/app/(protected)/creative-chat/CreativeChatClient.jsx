@@ -13,7 +13,7 @@ const TONE_TO_TASK_TYPE = {
 };
 
 export default function CreativeChatClient() {
-  const { t } = useCreativeChatI18n();
+  const { t, language } = useCreativeChatI18n();
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const smartSessionIdRef = useRef(null);
@@ -60,6 +60,7 @@ export default function CreativeChatClient() {
       const body = {
         message: content,
         task_type: taskType,
+        lang: language
       };
       if (taskType === "smart" && smartSessionIdRef.current) {
         body.session_id = smartSessionIdRef.current;
